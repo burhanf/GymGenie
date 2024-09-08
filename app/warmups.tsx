@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, ScrollView, Pressable } from "react-native";
-import { DataTable } from "react-native-paper";
-import { Link } from "expo-router";
+import { Appbar, Button, DataTable } from "react-native-paper";
+import { Link, useRouter } from "expo-router";
 interface Warmup {
   id: number;
   exercise: string;
@@ -8,6 +8,7 @@ interface Warmup {
   reps: string;
   notes: string;
   tutorial: string;
+  color: string;
 }
 
 const warmupData: Warmup[] = [
@@ -18,6 +19,7 @@ const warmupData: Warmup[] = [
     reps: "5-10MIN",
     notes: "PICK ANY MACHINE WHICH ELEVATES YOUR HEART RATE TO 100-135BPM",
     tutorial: "",
+    color: "#eeeeee",
   },
   {
     id: 1,
@@ -27,6 +29,7 @@ const warmupData: Warmup[] = [
     notes:
       "FOAM ROLL LARGE MUSCLE GROUPS: QUADS, LATS, CALVES. OPTIONALLY USE A LACROSSE BALL FOR SMALLER MUSCLE GROUPS: PECS, DELTS, HAMSTRING",
     tutorial: "",
+    color: "#eeeeee",
   },
   {
     id: 2,
@@ -35,6 +38,7 @@ const warmupData: Warmup[] = [
     reps: "12",
     notes: "12 EACH LEG",
     tutorial: "",
+    color: "#c3d1ec",
   },
   {
     id: 3,
@@ -43,6 +47,7 @@ const warmupData: Warmup[] = [
     reps: "12",
     notes: "12 EACH LEG",
     tutorial: "",
+    color: "#c3d1ec",
   },
   {
     id: 4,
@@ -51,6 +56,7 @@ const warmupData: Warmup[] = [
     reps: "15 SEC",
     notes: "SQUEEZE YOUR GLUTES AS HARD AS POSSIBLE",
     tutorial: "",
+    color: "#c3d1ec",
   },
   {
     id: 5,
@@ -59,6 +65,7 @@ const warmupData: Warmup[] = [
     reps: "15",
     notes: "MIND MUSCLE CONNECTION WITH MID BACK",
     tutorial: "",
+    color: "#abdcb4",
   },
   {
     id: 6,
@@ -67,6 +74,7 @@ const warmupData: Warmup[] = [
     reps: "15",
     notes: "15 EACH SIDE",
     tutorial: "",
+    color: "#ffcec4",
   },
   {
     id: 7,
@@ -75,6 +83,7 @@ const warmupData: Warmup[] = [
     reps: "15",
     notes: "15 EACH SIDE",
     tutorial: "",
+    color: "#ffcec4",
   },
   {
     id: 8,
@@ -83,44 +92,62 @@ const warmupData: Warmup[] = [
     reps: "15",
     notes: "LIGHT SQUEEZE ON TRAPS AT THE TOP OF EACH REP",
     tutorial: "",
+    color: "#abdcb4",
   },
 ];
 
 export default function Warmups() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
-      <DataTable>
-        <DataTable.Header style={styles.head}>
-          <DataTable.Title style={styles.exercise}>Exercise</DataTable.Title>
-          <DataTable.Title numeric>Sets</DataTable.Title>
-          <DataTable.Title>Reps/Time</DataTable.Title>
-          <DataTable.Title>Notes</DataTable.Title>
-        </DataTable.Header>
+      <Appbar.Header style={styles.appbar}>
+        <Appbar.BackAction onPress={() => router.back()} />
+        <Appbar.Content title="Warm Ups" />
+      </Appbar.Header>
 
-        {warmupData.map((warmup, key) => {
-          key = warmup.id;
-          return (
-            <DataTable.Row style={styles.row}>
-              <DataTable.Cell style={styles.exercise}>
-                {warmup.exercise}
-              </DataTable.Cell>
-              <DataTable.Cell>{warmup.sets}</DataTable.Cell>
-              <DataTable.Cell>{warmup.reps}</DataTable.Cell>
-              <DataTable.Cell>
-                <ScrollView horizontal style={styles.scrollView}>
-                  <Text>{warmup.notes}</Text>
-                </ScrollView>
-              </DataTable.Cell>
-            </DataTable.Row>
-          );
-        })}
-      </DataTable>
+      <View style={styles.contentContainer}>
+        <ScrollView style={styles.scrollView}>
+          <DataTable>
+            <DataTable.Header style={styles.head}>
+              <DataTable.Title
+                textStyle={{ color: "white" }}
+                style={styles.exercise}
+              >
+                Exercise
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ color: "white" }}>
+                Sets
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ color: "white" }}>
+                Reps/Time
+              </DataTable.Title>
+              <DataTable.Title textStyle={{ color: "white" }}>
+                Notes
+              </DataTable.Title>
+            </DataTable.Header>
 
-      <Link href="/" asChild>
-        <Pressable>
-          <Text>Home</Text>
-        </Pressable>
-      </Link>
+            {warmupData.map((warmup) => (
+              <DataTable.Row
+                key={warmup.id}
+                style={[styles.row, { backgroundColor: warmup.color }]}
+              >
+                <DataTable.Cell style={styles.exercise}>
+                  <Text style={styles.cellText}>{warmup.exercise}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text style={styles.cellText}>{warmup.sets}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text style={styles.cellText}>{warmup.reps}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell style={styles.notesCell}>
+                  <Text style={styles.cellText}>{warmup.notes}</Text>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable>
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -128,14 +155,34 @@ export default function Warmups() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 100,
-    paddingHorizontal: 30,
     backgroundColor: "#fff",
   },
-  head: { height: 44, backgroundColor: "lavender" },
-  row: { height: 40, backgroundColor: "lightyellow" },
-  exercise: { flex: 2.5, padding: 5 },
+  appbar: {
+    paddingTop: 0,
+  },
+  contentContainer: {
+    flex: 1,
+    marginTop: 5, // Adjust margin top to account for Appbar height
+  },
   scrollView: {
-    maxHeight: 60, // Adjust height as needed
+    flex: 1,
+  },
+  head: {
+    height: 44,
+    backgroundColor: "gray",
+  },
+  row: {
+    minHeight: 80, // Increase row height to fit multi-line text
+    alignItems: "flex-start",
+  },
+  exercise: {
+    padding: 5,
+  },
+  notesCell: {
+    padding: 10,
+  },
+  cellText: {
+    color: "black",
+    flexWrap: "wrap", // Ensure text wraps inside the cells
   },
 });
